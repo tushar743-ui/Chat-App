@@ -1,1 +1,51 @@
+# Ignore node modules folder
 node_modules
+
+# Ignore log files
+*.log
+# Ignore environment variable files
+.env
+.env.local
+.env.*.local
+# Ignore build output
+dist
+build
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+# Ignore IDE specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+# Ignore test coverage reports
+coverage/
+.nyc_output/
+# Ignore temporary files
+*.tmp
+*.swp
+# Ignore package lock files
+package-lock.json
+yarn.lock
+.pnpm-lock.yaml
+# Ignore compiled files
+*.class
+*.o
+*.so
+*.exe
+*.dll
+
+
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+# Ignore virtual environment folders
+venv/
+.env/
+.envs/
+
+
+
+
