@@ -50,8 +50,17 @@ io.on("connection", (socket)=>{
 
 
 //middleware setup
+app.use(cors({
+  origin: [
+    "https://chat-app-eight-liard.vercel.app"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "token"],
+  credentials: true
+}));
+
+app.options("*", cors());
 app.use(express.json({limit:"4mb"}))
-app.use(cors());
 
 
 //Router setup
