@@ -1,22 +1,19 @@
 import React from 'react'
 import assets from '../assets/assets'
-import { useContext, useEffect , useState } from 'react'
-import { ChatContext } from '../../context/ChatContext'
-import { AuthContext } from '../../context/AuthContext'
+import { useContext, useMemo } from 'react'
+import { ChatContext } from '../../context/chat-context'
+import { AuthContext } from '../../context/auth-context'
 
 
 const RightSidebar = () => {
   const {selectedUser, messages} = useContext(ChatContext)
   const {logout , onlineUsers} = useContext(AuthContext)
-  const[msgImages , setMsgImages] = useState([])
 
-
-  // get all images form the messages and set them to state 
-  useEffect(()=>{
-    setMsgImages(
-      messages.filter(msg=> msg.image).map(msg=>msg.image)
-    )
-  },[messages])
+  // get all images form the messages
+  const msgImages = useMemo(
+    ()=> messages.filter(msg=> msg.image).map(msg=>msg.image),
+    [messages]
+  )
 
 
 

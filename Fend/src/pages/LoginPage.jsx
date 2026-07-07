@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import assets from '../assets/assets'
-import { AuthContext } from '../../context/AuthContext'
+import { AuthContext } from '../../context/auth-context'
+import toast from 'react-hot-toast'
 
 const LoginPage = () => {
   const [CurrState, setCurrState] = useState("Sign up")
@@ -9,32 +10,60 @@ const LoginPage = () => {
   const [password, setpassword] = useState("")
   const [bio, setbio] = useState("")
   const [isDataSubmitted, setisDataSubmitted] = useState(false)
-  
+  const [isLoading, setisLoading] = useState(false)
 
   const { login } = useContext(AuthContext)
 
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = async (event) => {
     event.preventDefault()
+    
+    // Validation
+    if (CurrState === "Sign up" && !fullName.trim()) {
+      toast.error("Please enter your full name")
+      return
+    }
+    if (!email.trim()) {
+      toast.error("Please enter your email")
+      return
+    }
+    if (!password.trim() || password.length < 6) {
+      toast.error("Password must be at least 6 characters")
+      return
+    }
+    
     if (CurrState === 'Sign up' && !isDataSubmitted) {
       setisDataSubmitted(true)
       return
     }
-    login(
-      CurrState === "Sign up" ? 'signup' : 'login',
-      { fullName, email, password, bio }
-    )
+
+    if (CurrState === "Sign up" && !bio.trim()) {
+      toast.error("Please provide a bio")
+      return
+    }
+
+    try {
+      setisLoading(true)
+      await login(
+        CurrState === "Sign up" ? 'signup' : 'login',
+        { fullName, email, password, bio }
+      )
+    } catch (error) {
+      toast.error(error.message || "An error occurred")
+    } finally {
+      setisLoading(false)
+    }
   }
 
   return (
-    <div className='min-h-screen bg-cover bg-center flex items-center justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop:blur-2xl'>
+    <div className='min-h-screen bg-cover bg-center flex items-center justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop-blur-2xl'>
 
       {/* -----left------- */}
-      <img src={assets.logo_big} alt="" className='w-[min(30vw,250px)]'/>
+      <img src={assets.logo_big} alt="Logo" className='w-[min(30vw,250px)]'/>
 
       {/* ----right------ */}
       <form
         onSubmit={onSubmitHandler}
-        className='border-2 bg-white/8 text-white border-gray-500 p-6 flex flex-col gap-6 rounded-lg shadow-lg'
+        className='border-2 bg-white/8 text-white border-gray-500 p-6 flex flex-col gap-6 rounded-lg shadow-lg w-full max-w-md'
       >
 
         <h2 className='font-medium text-2xl flex justify-between items-center'>
@@ -43,8 +72,8 @@ const LoginPage = () => {
             <img
               onClick={() => setisDataSubmitted(false)}
               src={assets.arrow_icon}
-              alt=""
-              className='w-5 cursor-pointer'
+              alt="Back"
+              className='w-5 cursor-pointer hover:opacity-75'
             />
           }
         </h2>
@@ -54,7 +83,7 @@ const LoginPage = () => {
             onChange={(e) => setfullName(e.target.value)}
             value={fullName}
             type="text"
-            className='p-2 border border-gray-500 rounded-md focus:outline-none'
+            className='p-3 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black'
             placeholder='Full Name'
             required
           />
@@ -68,7 +97,7 @@ const LoginPage = () => {
               type="email"
               placeholder='Email Address'
               required
-              className='border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'
+              className='p-3 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black'
             />
 
             <input
@@ -77,7 +106,7 @@ const LoginPage = () => {
               type="password"
               placeholder='Password'
               required
-              className='border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'
+              className='p-3 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black'
             />
           </>
         )}
@@ -87,7 +116,7 @@ const LoginPage = () => {
             onChange={(e) => setbio(e.target.value)}
             value={bio}
             rows={4}
-            className='p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'
+            className='p-3 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black'
             placeholder='Provide a short bio...'
             required
           ></textarea>
@@ -95,28 +124,29 @@ const LoginPage = () => {
 
         <button
           type='submit'
-          className='py-3 bg-linear-to-r from-purple-400 to-violet-600 text-white rounded-md cursor-pointer'
+          disabled={isLoading}
+          className='py-3 bg-gradient-to-r from-purple-400 to-violet-600 text-white rounded-md cursor-pointer hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed'
         >
-          {CurrState === "Sign up" ? "Create Account" : "Login Now"}
+          {isLoading ? "Loading..." : (CurrState === "Sign up" ? "Create Account" : "Login Now")}
         </button>
 
         <div className='flex flex-col gap-2'>
           {CurrState === "Sign up" ? (
-            <p className='text-sm text-gray-600'>
+            <p className='text-sm text-gray-300'>
               Already have an account{" "}
               <span
                 onClick={() => { setCurrState("Login"); setisDataSubmitted(false) }}
-                className='font-medium text-violet-500 cursor-pointer'
+                className='font-medium text-violet-300 cursor-pointer hover:text-violet-200'
               >
                 Login here
               </span>
             </p>
           ) : (
-            <p className='text-sm text-gray-600'>
+            <p className='text-sm text-gray-300'>
               Create an account{" "}
               <span
                 onClick={() => setCurrState("Sign up")}
-                className='font-medium text-violet-500 cursor-pointer'
+                className='font-medium text-violet-300 cursor-pointer hover:text-violet-200'
               >
                 Click here
               </span>

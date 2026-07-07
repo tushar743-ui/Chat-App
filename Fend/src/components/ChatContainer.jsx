@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import assets from '../assets/assets'
 import { formatMessageTime } from '../lib/utils'
-import { ChatContext } from '../../context/ChatContext'
-import { AuthContext } from '../../context/AuthContext'
+import { ChatContext } from '../../context/chat-context'
+import { AuthContext } from '../../context/auth-context'
 import toast from 'react-hot-toast'
 
 const ChatContainer = () => {
@@ -30,7 +30,7 @@ const ChatContainer = () => {
    const handleSendImage = async (e)=>{
     const file = e.target.files[0];
     if(!file || !file.type.startsWith("image/")){
-      toast.error(error.message);
+      toast.error("Please select a valid image file");
       return ;
     }
     const reader = new FileReader();

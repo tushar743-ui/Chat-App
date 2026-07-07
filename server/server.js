@@ -50,16 +50,19 @@ io.on("connection", (socket)=>{
 
 
 //middleware setup
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "https://chat-app-eight-liard.vercel.app"
+];
+
 app.use(cors({
-  origin: [
-    "https://chat-app-eight-liard.vercel.app"
-  ],
+  origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "token"],
   credentials: true
 }));
 
-app.use(cors());
 app.use(express.json({limit:"4mb"}))
 
 
